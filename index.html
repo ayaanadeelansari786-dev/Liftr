@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="description" content="GymTracker — a fully offline PWA for tracking workouts, sets, and body weight." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="GymTracker" />
+  <title>GymTracker</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <!-- Tabler Icons (outline) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div id="app">
+
+  <!-- iOS Safari Install Banner -->
+  <div id="ios-install-banner" class="card" style="display:none; margin:16px 20px 0; padding:14px; background:linear-gradient(135deg, #141414 0%, #112211 100%); border-color:rgba(34,197,94,0.3); flex-direction:column; gap:10px; animation:fadeInUp 0.3s ease both">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div style="display:flex; align-items:center; gap:8px; font-weight:700; color:var(--success)">
+        <i class="ti ti-download" style="font-size:18px"></i> Install GymTracker
+      </div>
+      <button id="ios-install-close" class="btn-ghost" style="padding:0; width:20px; height:20px; color:var(--text-muted); cursor:pointer"><i class="ti ti-x" style="font-size:16px"></i></button>
+    </div>
+    <div style="font-size:12px; color:var(--text-dim); line-height:1.5">
+      Add this app to your Home Screen for a 100% offline app experience:
+      <ol style="margin-left:16px; margin-top:4px; display:flex; flex-direction:column; gap:2px">
+        <li>Tap the <strong>Share</strong> button <i class="ti ti-share" style="color:var(--accent)"></i> in Safari.</li>
+        <li>Scroll down and select <strong>Add to Home Screen</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ─── Active Workout Floating Chip ─────────────────────────────── -->
+  <div id="active-chip" role="button" aria-label="Resume active workout">
+    <i class="ti ti-player-play-filled" style="font-size:13px"></i>
+    <span id="chip-time">00:00</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: HOME                                                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="view-home" class="view active">
+    <!-- Header -->
+    <div style="margin-bottom: 4px; display:flex; justify-content:space-between; align-items:flex-end">
+      <div>
+        <div class="dash-date" id="dash-date">Thursday, July 16</div>
+        <div class="dash-greeting" id="dash-greeting">Welcome back, Athlete!</div>
+      </div>
+    </div>
+
+    <!-- Segment tabs for Home -->
+    <div class="seg-tabs" id="home-tabs" style="margin-bottom: 12px; flex-shrink:0">
+      <button class="seg-tab active" data-tab="dash">Dashboard</button>
+      <button class="seg-tab" data-tab="calendar">Calendar</button>
+      <button class="seg-tab" data-tab="stats">Stats</button>
+    </div>
+
+    <!-- Sub-view: Dashboard -->
+    <div id="home-dash" class="home-panel active" style="display:flex; flex-direction:column; gap:14px; width:100%">
+      <!-- Big Start Workout Button -->
+      <button class="btn btn-accent btn-lg" id="start-workout-btn-dash" style="padding: 16px 20px; font-size: 16px; font-weight: 800; border-radius: var(--radius-lg); box-shadow: 0 6px 24px var(--accent-glow)">
+        <i class="ti ti-play-filled" style="font-size:18px; margin-right:4px"></i>
+        Start Workout
+      </button>
+
+      <!-- Overview Grid: Streak + Weight -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+        <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 12px">
+          <i class="ti ti-flame" style="font-size: 28px; color: var(--accent); margin-bottom: 4px; filter: drop-shadow(0 0 6px rgba(200, 255, 0, 0.3))"></i>
+          <div class="stat-val" id="home-streak" style="font-size: 24px; font-weight: 800">0🔥</div>
+          <div class="stat-label" style="font-size: 10px; margin-top: 2px">Current Streak</div>
+        </div>
+        <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 12px">
+          <i class="ti ti-scale" style="font-size: 28px; color: #00c8ff; margin-bottom: 4px"></i>
+          <div class="stat-val" id="home-weight" style="font-size: 24px; font-weight: 800; color: #00c8ff">—</div>
+          <div class="stat-label" style="font-size: 10px; margin-top: 2px">Current Weight</div>
+        </div>
+      </div>
+
+      <!-- Last Workout Summary Card -->
+      <div class="card" id="home-last-workout-card">
+        <div class="card-header">
+          <span class="card-title">Last Workout</span>
+          <span style="font-size:11px;color:var(--text-muted)" id="home-last-workout-date">—</span>
+        </div>
+        <div id="home-last-workout-body" style="display:flex; flex-direction:column; gap:4px">
+          <div style="font-size: 16px; font-weight: 700" id="home-last-workout-name">No workouts logged yet</div>
+          <div style="font-size: 13px; color: var(--text-dim)" id="home-last-workout-muscles">Start training to see your summary!</div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px">
+            <span style="font-size:12px; color:var(--text-muted)">Total Volume</span>
+            <span style="font-size:14px; font-weight:700; color:var(--accent)" id="home-last-workout-vol">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Stats Section -->
+      <div class="card">
+        <div class="card-header" style="margin-bottom:12px">
+          <span class="card-title">Weekly Stats</span>
+          <span style="font-size:11px;color:var(--text-muted)">This Week</span>
+        </div>
+        <div class="stats-row" style="margin-bottom: 0">
+          <div class="stat-box" style="background:var(--card-2); border:none; border-radius:var(--radius-sm)"><div class="stat-val" id="stat-workouts">0</div><div class="stat-label">Completed</div></div>
+          <div class="stat-box" style="background:var(--card-2); border:none; border-radius:var(--radius-sm)"><div class="stat-val" id="stat-sets">0</div><div class="stat-label">Total Sets</div></div>
+          <div class="stat-box" style="background:var(--card-2); border:none; border-radius:var(--radius-sm)"><div class="stat-val" id="stat-vol">0</div><div class="stat-label">Volume</div></div>
+        </div>
+      </div>
+
+      <!-- Recent Workouts / Quick Action Templates -->
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px">
+        <span class="section-label">Quick Templates</span>
+        <button class="btn btn-ghost" id="open-templates-btn" style="padding: 2px 6px; font-size:12px">
+          <i class="ti ti-layout-grid" style="font-size:14px; vertical-align:-2px"></i> All Templates
+        </button>
+      </div>
+      <div id="quick-templates" class="quick-start-grid"></div>
+
+      <div class="section-label" style="margin-top: 6px">Recent Workouts</div>
+      <div id="recent-workouts" style="display:flex;flex-direction:column;gap:10px"></div>
+    </div>
+
+    <!-- Sub-view: Calendar -->
+    <div id="home-calendar" class="home-panel" style="display:none; flex-direction:column; gap:14px; width:100%">
+      <div class="card" style="padding:14px">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+          <button class="btn btn-secondary btn-sm" id="cal-prev-month" style="width:36px; height:36px; padding:0; border-radius:50%"><i class="ti ti-chevron-left" style="font-size:16px"></i></button>
+          <span id="cal-month-title" style="font-size:16px; font-weight:800; color:var(--text)">July 2026</span>
+          <button class="btn btn-secondary btn-sm" id="cal-next-month" style="width:36px; height:36px; padding:0; border-radius:50%"><i class="ti ti-chevron-right" style="font-size:16px"></i></button>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(7, 1fr); text-align:center; font-size:11px; font-weight:700; color:var(--text-muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.5px">
+          <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+        </div>
+        <div id="calendar-grid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:8px">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      
+      <!-- Calendar Legend -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:16px; font-size:11px; color:var(--text-muted); font-weight:600">
+        <div style="display:flex; align-items:center; gap:5px">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--success)"></span> Workout
+        </div>
+        <div style="display:flex; align-items:center; gap:5px">
+          <span style="width:8px; height:8px; border-radius:50%; background:#eab308"></span> Light Workout
+        </div>
+        <div style="display:flex; align-items:center; gap:5px">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--border)"></span> Rest Day
+        </div>
+      </div>
+      
+      <!-- Selected day details -->
+      <div id="cal-day-detail-container" style="display:flex; flex-direction:column; gap:8px"></div>
+    </div>
+
+    <!-- Sub-view: Stats Dashboard -->
+    <div id="home-stats" class="home-panel" style="display:none; flex-direction:column; gap:14px; width:100%">
+      <div class="seg-tabs" id="stats-time-tabs" style="margin-bottom:4px; flex-shrink:0">
+        <button class="seg-tab active" data-time="weekly">Weekly</button>
+        <button class="seg-tab" data-time="monthly">Monthly</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-workouts-count" style="font-size:24px; font-weight:900">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Workouts</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-hours-count" style="font-size:24px; font-weight:900">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Hours Trained</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-sets-count" style="font-size:24px; font-weight:900">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Total Sets</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-vol-count" style="font-size:24px; font-weight:900">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Volume</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-consistency" style="font-size:24px; font-weight:900">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Consistency %</div>
+        </div>
+        <div class="card" style="padding:14px; text-align:center">
+          <div class="stat-val" id="stats-most-trained" style="font-size:15px; font-weight:900; line-height:1.2; height:24px; display:flex; align-items:center; justify-content:center">—</div>
+          <div class="stat-label" style="font-size:10px; margin-top:4px">Most Trained Muscle</div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="card-title" style="margin-bottom:12px">All-Time Records &amp; Streak</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px">
+            <span style="color:var(--text-muted)">Strongest Exercise</span>
+            <span id="stats-strongest-ex" style="font-weight:700; color:var(--accent); text-align:right">—</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; border-top:1px solid var(--border); padding-top:10px">
+            <span style="color:var(--text-muted)">Current Streak</span>
+            <span id="stats-current-streak" style="font-weight:700">0 days</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; border-top:1px solid var(--border); padding-top:10px">
+            <span style="color:var(--text-muted)">Longest Streak</span>
+            <span id="stats-longest-streak" style="font-weight:700">0 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: WORKOUT                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="view-workout" class="view">
+
+    <!-- Empty state -->
+    <div id="workout-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;text-align:center;gap:16px;padding:40px 20px">
+      <div style="width:80px;height:80px;background:var(--accent-dim);border-radius:50%;display:flex;align-items:center;justify-content:center">
+        <i class="ti ti-barbell" style="font-size:38px;color:var(--accent)"></i>
+      </div>
+      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">Ready to Train?</div>
+      <div style="font-size:14px;color:var(--text-muted);line-height:1.6;max-width:260px">Start a fresh workout or pick a template to jump right in</div>
+      <button class="btn btn-accent" id="start-workout-btn-empty" style="max-width:240px;margin-top:8px">
+        <i class="ti ti-plus" style="font-size:18px"></i>
+        New Workout
+      </button>
+    </div>
+
+    <!-- Workout setup wizard flow -->
+    <div id="workout-setup" style="display:none;flex-direction:column;gap:16px;width:100%">
+      <!-- Header / Progress Indicator -->
+      <div style="display:flex; align-items:center; justify-content:space-between">
+        <span style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.8px" id="setup-step-indicator">Step 1 of 3</span>
+        <button class="btn btn-ghost" id="setup-cancel-btn" style="padding:0; font-size:13px">Cancel</button>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div style="height:4px; background:var(--card-2); border-radius:2px; overflow:hidden; margin-top:-4px">
+        <div id="setup-progress-bar" style="width:33.33%; height:100%; background:var(--accent); transition:width 0.3s ease"></div>
+      </div>
+
+      <div style="font-size: 20px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 2px" id="setup-step-title">Select Muscle Groups</div>
+
+      <!-- Step 1: Muscle groups multi-select grid -->
+      <div id="setup-step-1" style="display:flex; flex-direction:column; gap:12px">
+        <div style="font-size:13px; color:var(--text-muted)">What do you want to train today? Select all that apply.</div>
+        
+        <!-- Backdate Workout Option -->
+        <div class="card" style="padding:10px 14px; display:flex; flex-direction:column; gap:6px; background:var(--card-2)">
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <span style="font-size:13px; font-weight:700">Workout Date</span>
+            <label style="display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-muted); cursor:pointer">
+              <input type="checkbox" id="backdate-workout-check" style="accent-color:var(--accent)" />
+              Log past workout
+            </label>
+          </div>
+          <div id="backdate-workout-picker-wrap" style="display:none; margin-top:4px">
+            <input type="date" id="backdate-workout-picker" class="input" style="font-size:13px; padding:8px 12px; height:auto; background:var(--card)" />
+          </div>
+        </div>
+
+        <div id="muscle-groups-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; margin-top:4px">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Step 2: Exercises pick lists -->
+      <div id="setup-step-2" style="display:none; flex-direction:column; gap:12px">
+        <div style="font-size:13px; color:var(--text-muted)">Pick exercises for your selected muscle groups.</div>
+        <div id="exercises-select-lists" style="display:flex; flex-direction:column; gap:10px; overflow-y:auto; max-height:50dvh; padding-right:4px">
+          <!-- Dynamically populated, grouped by muscle group -->
+        </div>
+      </div>
+
+      <!-- Step 3: Review workout -->
+      <div id="setup-step-3" style="display:none; flex-direction:column; gap:12px">
+        <div style="font-size:13px; color:var(--text-muted)">Double check your exercise selection. You can add more later.</div>
+        <div id="setup-review-list" style="display:flex; flex-direction:column; gap:10px; overflow-y:auto; max-height:50dvh; padding-right:4px">
+          <!-- Dynamically populated review items -->
+        </div>
+      </div>
+
+      <!-- Wizard Navigation Controls -->
+      <div style="display:flex; gap:10px; margin-top:auto; padding-top:12px; border-top:1px solid var(--border)">
+        <button class="btn btn-secondary" id="setup-back-btn" style="flex:1; display:none">Back</button>
+        <button class="btn btn-accent" id="setup-next-btn" style="flex:2">Next</button>
+      </div>
+    </div>
+
+    <!-- Active workout UI -->
+    <div id="workout-active" style="display:none;flex-direction:column;gap:12px;width:100%">
+
+      <!-- Timer bar -->
+      <div class="workout-timer-bar">
+        <div>
+          <div class="timer-display" id="workout-elapsed">00:00</div>
+          <div class="timer-label">Elapsed Time</div>
+        </div>
+        <div style="text-align:right">
+          <div id="workout-name" style="font-size:20px;font-weight:700;cursor:pointer">Workout</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Tap name to edit</div>
+        </div>
+      </div>
+
+      <!-- Exercise progress indicator -->
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span id="active-ex-indicator" style="font-size:12px;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:0.8px">Exercise 1 of 1</span>
+        <button class="btn btn-ghost btn-sm" id="manage-exercises-btn" style="padding:4px 10px;font-size:12px">
+          <i class="ti ti-list-details" style="font-size:14px;vertical-align:-2px;margin-right:3px"></i>Manage
+        </button>
+      </div>
+
+      <!-- Current Exercise Card -->
+      <div class="card" style="padding:0;overflow:hidden">
+        <!-- Exercise name & category -->
+        <div style="padding:16px 16px 12px;border-bottom:1px solid var(--border)">
+          <div id="active-ex-name" style="font-size:20px;font-weight:800;letter-spacing:-0.4px;margin-bottom:2px">—</div>
+          <div id="active-ex-category" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.6px;color:var(--accent)"></div>
+        </div>
+
+        <!-- Sets table -->
+        <div id="workout-exercises" style="padding:0 16px 0">
+          <table class="sets-table" style="width:100%;margin-top:0">
+            <thead>
+              <tr>
+                <th style="width:44px">Set</th>
+                <th id="sets-unit-header">kg</th>
+                <th>Reps</th>
+                <th style="width:42px"></th>
+                <th style="width:36px"></th>
+              </tr>
+            </thead>
+            <tbody id="active-sets-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Add set button -->
+        <div style="padding:10px 16px 4px">
+          <button class="add-set-btn" id="active-add-set-btn" style="width:100%">
+            <i class="ti ti-plus" style="font-size:14px"></i> Add Set
+          </button>
+        </div>
+
+        <!-- Previous session data -->
+        <div style="padding:10px 16px 16px;border-top:1px solid var(--border);margin-top:10px">
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);font-weight:600;margin-bottom:6px">Previous Session</div>
+          <div id="active-ex-prev-data" style="font-size:13px;color:var(--text-dim);display:flex;flex-direction:column;gap:2px">
+            <span style="color:var(--text-muted)">No previous data.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercise action buttons -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button class="btn btn-secondary" id="skip-exercise-btn">
+          <i class="ti ti-player-skip-forward" style="font-size:16px"></i> Skip
+        </button>
+        <button class="btn btn-accent" id="finish-exercise-btn">
+          <i class="ti ti-check" style="font-size:16px"></i> Done
+        </button>
+      </div>
+
+      <!-- Save template + Finish workout -->
+      <div class="finish-bar" style="display:flex;gap:10px">
+        <button class="btn btn-secondary" id="save-template-btn" style="width:auto;padding:14px 16px" title="Save as template">
+          <i class="ti ti-device-floppy" style="font-size:16px"></i>
+        </button>
+        <button class="btn btn-danger" id="finish-workout-btn" style="flex:1">
+          <i class="ti ti-flag" style="font-size:16px"></i>
+          End Workout
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── Workout Summary (shown after ending session) ─── -->
+    <div id="workout-summary" style="display:none;flex-direction:column;gap:14px;width:100%">
+
+      <!-- Trophy header -->
+      <div class="summary-hero">
+        <div class="summary-trophy">🏆</div>
+        <div id="summary-name" style="font-size:24px;font-weight:900;letter-spacing:-0.5px;margin-bottom:4px">Workout Complete!</div>
+        <div id="summary-date" style="font-size:13px;color:var(--text-muted)"></div>
+      </div>
+
+      <!-- Primary stats row: duration + volume -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="summary-stat-card summary-stat-accent">
+          <i class="ti ti-clock" style="font-size:20px;margin-bottom:6px;opacity:0.8"></i>
+          <div class="summary-stat-val" id="summary-duration">0:00</div>
+          <div class="summary-stat-label">Duration</div>
+        </div>
+        <div class="summary-stat-card summary-stat-accent">
+          <i class="ti ti-weight" style="font-size:20px;margin-bottom:6px;opacity:0.8"></i>
+          <div class="summary-stat-val" id="summary-volume">0 kg</div>
+          <div class="summary-stat-label">Total Volume</div>
+        </div>
+      </div>
+
+      <!-- Secondary stats: exercises / sets / reps -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <div class="summary-stat-card">
+          <div class="summary-stat-val" id="summary-exercises" style="font-size:22px">0</div>
+          <div class="summary-stat-label">Exercises</div>
+        </div>
+        <div class="summary-stat-card">
+          <div class="summary-stat-val" id="summary-sets" style="font-size:22px">0</div>
+          <div class="summary-stat-label">Sets</div>
+        </div>
+        <div class="summary-stat-card">
+          <div class="summary-stat-val" id="summary-reps" style="font-size:22px">0</div>
+          <div class="summary-stat-label">Reps</div>
+        </div>
+      </div>
+
+      <!-- PRs earned this session -->
+      <div id="summary-prs-row" style="display:none">
+        <div class="summary-pr-banner">
+          <i class="ti ti-trophy" style="font-size:16px"></i>
+          <span id="summary-prs-text">New PRs this session!</span>
+        </div>
+      </div>
+
+      <!-- Exercise breakdown -->
+      <div class="section-label">Exercise Breakdown</div>
+      <div id="summary-exercise-list" style="display:flex;flex-direction:column;gap:8px"></div>
+
+      <!-- Action buttons -->
+      <div style="display:flex;flex-direction:column;gap:10px;padding-bottom:8px">
+        <button class="btn btn-accent" id="summary-save-btn" style="font-size:16px;font-weight:800">
+          <i class="ti ti-device-floppy" style="font-size:18px"></i>
+          Save Workout
+        </button>
+        <button class="btn btn-ghost" id="summary-continue-btn">
+          <i class="ti ti-arrow-back-up" style="font-size:15px"></i>
+          Continue Workout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: HISTORY                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="view-history" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <div class="header-greeting">Your Progress</div>
+        <div class="header-title">History</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span id="history-total-badge" style="font-size:11px;color:var(--text-muted);font-weight:600;background:var(--card-2);border:1px solid var(--border);padding:4px 10px;border-radius:99px"></span>
+      </div>
+    </div>
+    <div id="history-list" style="display:flex;flex-direction:column;gap:0"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: PROGRESS                                                  -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="view-progress" class="view">
+    <div class="app-header" style="padding:0 0 4px">
+      <div class="header-top">
+        <div>
+          <div class="header-greeting">Charts &amp; PRs</div>
+          <div class="header-title">Progress</div>
+        </div>
+        <button class="header-action-btn" id="add-custom-ex-btn" title="Add custom exercise" aria-label="Add exercise">
+          <i class="ti ti-plus" style="font-size:18px"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Segment tabs -->
+    <div class="seg-tabs" id="progress-tabs">
+      <button class="seg-tab active" data-tab="weight">Body Weight</button>
+      <button class="seg-tab" data-tab="prs">Exercise PRs</button>
+      <button class="seg-tab" data-tab="library">Library</button>
+    </div>
+
+    <!-- Sub-view: Body Weight -->
+    <div id="prog-weight" class="prog-panel active" style="width:100%">
+      <div class="card" style="padding:14px">
+        <div class="card-title" style="margin-bottom:12px">Log Weight</div>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:4px">
+          <div>
+            <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px">DATE</label>
+            <input id="wt-date" class="input" type="date" style="font-size:13px; padding:8px 12px; height:auto; background:var(--card)" />
+          </div>
+          <div>
+            <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px">WEIGHT</label>
+            <div class="weight-entry-row" style="margin-top:0">
+              <button id="wt-input-btn" class="weight-log-trigger" data-val="" style="flex:1">Select weight</button>
+              <div class="weight-unit-toggle">
+                <button class="unit-btn" data-unit="kg">kg</button>
+                <button class="unit-btn" data-unit="lbs">lbs</button>
+              </div>
+              <button class="btn btn-accent" id="log-weight-btn" style="width:auto;padding:12px 18px">Log</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="weight-stats" style="margin-top:12px">
+        <div class="stat-box"><div class="stat-val" id="wt-current">—</div><div class="stat-label">Current</div></div>
+        <div class="stat-box"><div class="stat-val" id="wt-min">—</div><div class="stat-label">Min</div></div>
+        <div class="stat-box"><div class="stat-val" id="wt-max">—</div><div class="stat-label">Max</div></div>
+      </div>
+      <div class="stat-box" style="display:flex;align-items:center;justify-content:space-between; margin-top:8px">
+        <span class="stat-label" style="text-align:left">7-Day Trend</span>
+        <span class="stat-val" id="wt-trend" style="font-size:18px">—</span>
+      </div>
+
+      <!-- Weight History Line Chart -->
+      <div class="card" style="margin-top:12px; padding:14px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <span class="card-title" style="margin-bottom:0">Weight Chart</span>
+          <div class="seg-tabs" id="weight-chart-range-tabs" style="transform:scale(0.85); transform-origin:right">
+            <button class="seg-tab active" data-range="weekly">W</button>
+            <button class="seg-tab" data-range="monthly">M</button>
+            <button class="seg-tab" data-range="yearly">Y</button>
+          </div>
+        </div>
+        <div style="position:relative;height:180px;width:100%">
+          <canvas id="weight-chart" style="width:100%;height:180px"></canvas>
+        </div>
+      </div>
+
+      <!-- BMI Calculator Section -->
+      <div class="card" style="margin-top:12px; padding:14px">
+        <div class="card-title" style="margin-bottom:12px">BMI Calculator</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px">
+          <div>
+            <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px">HEIGHT (CM)</label>
+            <input id="bmi-height" class="input" type="number" step="1" min="100" max="250" placeholder="175" />
+          </div>
+          <div>
+            <label style="font-size:11px; color:var(--text-muted); font-weight:600; display:block; margin-bottom:4px">WEIGHT (KG)</label>
+            <button id="bmi-weight-btn" class="edit-profile-trigger" data-val="" style="height:42px; padding:10px 14px; font-size:13px; font-weight:600">Select weight</button>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="bmi-calc-btn" style="margin-bottom:14px">Calculate BMI</button>
+        <div id="bmi-result-panel" style="display:none; flex-direction:column; gap:10px; border-top:1px solid var(--border); padding-top:12px">
+          <div style="display:flex; justify-content:space-between; align-items:baseline">
+            <span style="font-size:14px; font-weight:600">Your BMI: <span id="bmi-score-val" style="color:var(--accent); font-weight:900">22.5</span></span>
+            <span id="bmi-classification" style="font-size:12px; font-weight:700; background:var(--card-3); padding:4px 8px; border-radius:6px">Normal Weight</span>
+          </div>
+          <!-- BMI Indicator bar -->
+          <div style="position:relative; height:18px; border-radius:9px; background:linear-gradient(to right, #3b82f6 0%, #22c55e 35%, #eab308 65%, #ef4444 100%); overflow:hidden; margin-top:4px">
+            <div id="bmi-indicator-pin" style="position:absolute; top:0; left:50%; width:4px; height:100%; background:var(--text); border:1px solid #000; box-shadow:0 0 4px rgba(0,0,0,0.8); transition:left 0.3s ease"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:9px; color:var(--text-muted); font-weight:600">
+            <span>&lt;18.5 Under</span>
+            <span>18.5-24.9 Normal</span>
+            <span>25-29.9 Over</span>
+            <span>30+ Obese</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:12px">Weight Log History</div>
+      <div id="weight-log-list" class="weight-log-list"></div>
+    </div>
+
+    <!-- Sub-view: Exercise PRs -->
+    <div id="prog-prs" class="prog-panel">
+      <div class="card" style="margin-bottom:4px">
+        <div class="card-title" style="margin-bottom:10px">All-Time Personal Records</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.6">Tap any exercise in the Library tab to see full history. Your top PRs by best set volume are shown below.</div>
+      </div>
+      <div id="pr-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+
+    <!-- Sub-view: Library -->
+    <div id="prog-library" class="prog-panel">
+      <input id="lib-search" class="input lib-search" type="search" placeholder="Search exercises…" />
+      <div class="lib-filter-row" role="group" aria-label="Filter by category">
+        <button class="filter-chip active" data-cat="All">All</button>
+        <button class="filter-chip" data-cat="Push">Push</button>
+        <button class="filter-chip" data-cat="Pull">Pull</button>
+        <button class="filter-chip" data-cat="Legs">Legs</button>
+        <button class="filter-chip" data-cat="Core">Core</button>
+        <button class="filter-chip" data-cat="Cardio">Cardio</button>
+        <button class="filter-chip" data-cat="Custom">Custom</button>
+      </div>
+      <div id="library-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- VIEW: PROFILE                                                   -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div id="view-profile" class="view">
+    <div class="app-header" style="padding:0 0 4px">
+      <div class="header-top">
+        <div>
+          <div class="header-greeting">Your Account</div>
+          <div class="header-title">Profile</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avatar + name + goals card -->
+    <div class="profile-hero card" style="display:flex; flex-direction:column; gap:14px; padding:16px">
+      <div style="display:flex; align-items:center; gap:14px; width:100%">
+        <div class="profile-avatar">
+          <i class="ti ti-user" style="font-size:32px;color:var(--accent)"></i>
+        </div>
+        <div>
+          <div class="profile-name" id="profile-name-display">Athlete</div>
+          <div class="profile-sub" id="profile-goal-display">Goal: Build Muscle</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" id="edit-profile-btn" style="margin-left:auto; width:auto; padding:6px 12px">
+          <i class="ti ti-pencil" style="font-size:14px"></i> Edit
+        </button>
+      </div>
+
+      <!-- Quick Metrics Grid -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; border-top:1px solid var(--border); padding-top:12px; text-align:center">
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase">Age</div>
+          <div id="profile-age-display" style="font-size:15px; font-weight:800; margin-top:2px">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase">Height</div>
+          <div id="profile-height-display" style="font-size:15px; font-weight:800; margin-top:2px">—</div>
+        </div>
+        <div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase">Weight</div>
+          <div id="profile-weight-display" style="font-size:15px; font-weight:800; margin-top:2px">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BMI Link -->
+    <div class="card" style="padding:14px; margin-top:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer" id="profile-bmi-link">
+      <div style="display:flex; align-items:center; gap:10px">
+        <i class="ti ti-calculator" style="font-size:20px; color:var(--accent)"></i>
+        <div>
+          <div style="font-size:14px; font-weight:700">BMI Calculator</div>
+          <div style="font-size:11px; color:var(--text-muted)">Check your Body Mass Index and range</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-right" style="color:var(--text-muted)"></i>
+    </div>
+
+    <!-- Lifetime Stats -->
+    <div class="section-label">Lifetime &amp; Streak Stats</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+      <div class="card" style="padding:12px; text-align:center">
+        <div class="stat-val" id="prof-total-workouts">0</div>
+        <div class="stat-label" style="font-size:9px; margin-top:2px">Workouts Completed</div>
+      </div>
+      <div class="card" style="padding:12px; text-align:center">
+        <div class="stat-val" id="prof-total-sets">0</div>
+        <div class="stat-label" style="font-size:9px; margin-top:2px">Total Sets Logged</div>
+      </div>
+      <div class="card" style="padding:12px; text-align:center">
+        <div class="stat-val" id="prof-total-vol">0</div>
+        <div class="stat-label" style="font-size:9px; margin-top:2px">Total Weight Volume</div>
+      </div>
+      <div class="card" style="padding:12px; text-align:center">
+        <div class="stat-val accent" id="prof-streak">0 / 0🔥</div>
+        <div class="stat-label" style="font-size:9px; margin-top:2px">Current / Best Streak</div>
+      </div>
+    </div>
+
+    <!-- Muscle Recovery Panel -->
+    <div class="section-label">Muscle Recovery Indicators</div>
+    <div class="card" style="padding:14px">
+      <div style="font-size:12px; color:var(--text-muted); margin-bottom:12px; line-height:1.4">Based on your workout history. Muscle groups require 48 hours to recover fully.</div>
+      <div id="recovery-indicators-list" style="display:flex; flex-direction:column; gap:10px">
+        <!-- Dynamically populated muscle recovery items -->
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section-label">Settings</div>
+
+    <!-- Unit -->
+    <div class="card settings-row">
+      <div class="settings-label">
+        <i class="ti ti-ruler" style="font-size:18px;color:var(--text-muted)"></i>
+        <div>
+          <div style="font-size:14px;font-weight:600">Weight Unit</div>
+          <div style="font-size:12px;color:var(--text-muted)">Used for all exercises and body weight</div>
+        </div>
+      </div>
+      <div class="weight-unit-toggle">
+        <button class="unit-btn" data-unit="kg">kg</button>
+        <button class="unit-btn" data-unit="lbs">lbs</button>
+      </div>
+    </div>
+
+    <!-- Rest duration -->
+    <div class="card settings-row">
+      <div class="settings-label">
+        <i class="ti ti-clock" style="font-size:18px;color:var(--text-muted)"></i>
+        <div>
+          <div style="font-size:14px;font-weight:600">Default Rest Time</div>
+          <div style="font-size:12px;color:var(--text-muted)">Auto-starts after each logged set</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button class="btn btn-secondary btn-sm" id="rest-dec-btn" style="width:32px;height:32px;padding:0;border-radius:50%">−</button>
+        <span style="font-size:14px;font-weight:700;min-width:36px;text-align:center" id="rest-dur-display">60s</span>
+        <button class="btn btn-secondary btn-sm" id="rest-inc-btn" style="width:32px;height:32px;padding:0;border-radius:50%">+</button>
+      </div>
+    </div>
+
+    <!-- Data management -->
+    <div class="section-label">Data</div>
+
+    <!-- Export button — premium styled -->
+    <button id="export-data-btn" class="export-btn-card" aria-label="Export all gym data as JSON">
+      <div class="export-btn-left">
+        <div class="export-btn-icon-wrap">
+          <i class="ti ti-download" style="font-size:22px"></i>
+        </div>
+        <div>
+          <div class="export-btn-title">Export My Data</div>
+          <div class="export-btn-sub">Download all workouts, PRs &amp; weight as JSON</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-right export-btn-arrow"></i>
+    </button>
+
+    <!-- iOS tip — only shown on Safari/iOS -->
+    <div id="export-ios-tip" style="display:none; margin-top:6px; padding:10px 14px; background:rgba(200,255,0,0.06); border:1px solid rgba(200,255,0,0.18); border-radius:10px; font-size:12px; color:var(--text-muted); line-height:1.5">
+      <i class="ti ti-info-circle" style="color:var(--accent); margin-right:4px"></i>
+      <strong style="color:var(--accent)">iPhone tip:</strong> Your file will open in a new tab. Tap the <strong>Share</strong> button → <strong>Save to Files</strong> to download it.
+    </div>
+
+    <!-- About -->
+    <div class="section-label">About</div>
+    <div class="card" style="text-align:center;padding:20px">
+      <div style="font-size:28px;margin-bottom:8px">🏋️</div>
+      <div style="font-size:16px;font-weight:800;letter-spacing:-0.3px">GymTracker</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px">v1.0 · 100% Offline PWA</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.6">Built with Vanilla JS + IndexedDB.<br>No servers. No tracking. Just gains.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- BOTTOM NAV — 5 Tabs with Tabler Icons                          -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+
+    <button class="nav-item active" data-view="home" id="nav-home" aria-label="Home">
+      <div class="nav-icon-wrap">
+        <i class="ti ti-home"></i>
+      </div>
+      <span>Home</span>
+    </button>
+
+    <button class="nav-item" data-view="workout" id="nav-workout" aria-label="Workout">
+      <div class="nav-icon-wrap">
+        <i class="ti ti-barbell"></i>
+      </div>
+      <span>Workout</span>
+    </button>
+
+    <button class="nav-item nav-item-center" data-view="workout" id="nav-center" aria-label="Start Workout">
+      <div class="nav-center-btn">
+        <i class="ti ti-plus"></i>
+      </div>
+    </button>
+
+    <button class="nav-item" data-view="history" id="nav-history" aria-label="History">
+      <div class="nav-icon-wrap">
+        <i class="ti ti-history"></i>
+      </div>
+      <span>History</span>
+    </button>
+
+    <button class="nav-item" data-view="progress" id="nav-progress" aria-label="Progress">
+      <div class="nav-icon-wrap">
+        <i class="ti ti-chart-line"></i>
+      </div>
+      <span>Progress</span>
+    </button>
+
+    <button class="nav-item" data-view="profile" id="nav-profile" aria-label="Profile">
+      <div class="nav-icon-wrap">
+        <i class="ti ti-user"></i>
+      </div>
+      <span>Profile</span>
+    </button>
+
+  </nav>
+
+</div><!-- /#app -->
+
+<!-- ─── Rest Timer Overlay ─────────────────────────────────────────── -->
+<div id="rest-overlay" class="rest-overlay" role="dialog" aria-modal="true" aria-label="Rest timer">
+  <div class="rest-modal">
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;font-weight:500;text-transform:uppercase;letter-spacing:0.8px">Rest Timer</div>
+    <div class="rest-ring-wrap">
+      <svg class="rest-ring" viewBox="0 0 160 160">
+        <circle class="rest-ring-bg" cx="80" cy="80" r="70"/>
+        <circle class="rest-ring-progress" id="rest-ring-progress" cx="80" cy="80" r="70"/>
+      </svg>
+      <div class="rest-countdown" id="rest-countdown">60</div>
+    </div>
+    <div class="rest-label">seconds remaining</div>
+    <div class="rest-actions">
+      <button class="btn btn-secondary btn-sm" id="rest-minus" style="flex:1">−15s</button>
+      <button class="btn btn-accent" id="rest-skip-btn" style="flex:1">Skip</button>
+      <button class="btn btn-secondary btn-sm" id="rest-plus" style="flex:1">+15s</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Exercise Picker Modal ─────────────────────────────────────── -->
+<div id="ex-picker-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Add exercise">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="modal-title" style="margin-bottom:0">Add Exercise</div>
+      <button class="btn btn-ghost" id="ex-picker-close">Done</button>
+    </div>
+    <input id="ex-picker-search" class="input" type="search" placeholder="Search exercises…" style="margin-bottom:12px" />
+    <div class="modal-scroll" id="ex-picker-list"></div>
+  </div>
+</div>
+
+<!-- ─── Exercise Progress Modal (PR / Stats Modal Upgrade) ── -->
+<div id="pr-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Exercise stats">
+  <div class="modal-sheet" style="max-height:85dvh">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-shrink:0">
+      <div>
+        <div class="modal-title" id="pr-modal-title" style="margin-bottom:2px">—</div>
+        <div id="pr-modal-subtitle" style="font-size:12px;color:var(--text-muted)">Category · Muscle Groups</div>
+      </div>
+      <button class="btn btn-ghost" id="pr-modal-close" style="padding:4px 8px">Close</button>
+    </div>
+    
+    <div class="modal-scroll" id="pr-modal-body" style="padding-right:2px">
+      <!-- PR Bests Summary Grid -->
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px">
+        <div class="card" style="padding:10px; text-align:center; background:var(--card-2)">
+          <div class="stat-val" id="pr-best-weight" style="font-size:16px; font-weight:800; color:var(--accent)">—</div>
+          <div class="stat-label" style="font-size:9px; margin-top:2px">Max Weight</div>
+        </div>
+        <div class="card" style="padding:10px; text-align:center; background:var(--card-2)">
+          <div class="stat-val" id="pr-best-set" style="font-size:16px; font-weight:800; color:var(--text)">—</div>
+          <div class="stat-label" style="font-size:9px; margin-top:2px">Best Set</div>
+        </div>
+        <div class="card" style="padding:10px; text-align:center; background:var(--card-2)">
+          <div class="stat-val" id="pr-best-vol" style="font-size:16px; font-weight:800; color:#00c8ff">—</div>
+          <div class="stat-label" style="font-size:9px; margin-top:2px">Max Volume</div>
+        </div>
+      </div>
+
+      <!-- Charts list -->
+      <div style="display:flex; flex-direction:column; gap:16px">
+        <!-- Chart 1: Max Weight -->
+        <div class="card" style="padding:12px">
+          <div class="card-title" style="margin-bottom:8px; font-size:11px">Max Weight Over Time</div>
+          <div style="position:relative; height:140px; width:100%">
+            <canvas id="chart-ex-max-weight" style="width:100%; height:140px"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Total Volume -->
+        <div class="card" style="padding:12px">
+          <div class="card-title" style="margin-bottom:8px; font-size:11px">Total Volume per Session</div>
+          <div style="position:relative; height:140px; width:100%">
+            <canvas id="chart-ex-volume" style="width:100%; height:140px"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 3: Estimated 1RM -->
+        <div class="card" style="padding:12px">
+          <div class="card-title" style="margin-bottom:8px; font-size:11px">Estimated 1RM Over Time</div>
+          <div style="position:relative; height:140px; width:100%">
+            <canvas id="chart-ex-onerm" style="width:100%; height:140px"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Add Custom Exercise Modal ────────────────────────────────── -->
+<div id="add-ex-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Add custom exercise">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div class="modal-title" style="margin-bottom:0">New Exercise</div>
+      <button class="btn btn-ghost" id="add-ex-close">Cancel</button>
+    </div>
+    <div class="template-input-row">
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:6px;display:block">EXERCISE NAME</label>
+        <input id="new-ex-name" class="input" type="text" placeholder="e.g. Cable Fly" />
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:6px;display:block">MUSCLES</label>
+        <input id="new-ex-muscles" class="input" type="text" placeholder="e.g. Chest, Shoulders" />
+      </div>
+      <div>
+        <label style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:6px;display:block">CATEGORY</label>
+        <select id="new-ex-cat" class="input select">
+          <option value="Push">Push</option>
+          <option value="Pull">Pull</option>
+          <option value="Legs">Legs</option>
+          <option value="Core">Core</option>
+          <option value="Cardio">Cardio</option>
+          <option value="Custom">Other</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-accent" id="add-ex-save">Add to Library</button>
+  </div>
+</div>
+
+<!-- ─── Templates Modal ───────────────────────────────────────────── -->
+<div id="templates-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Workout templates">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="modal-title" style="margin-bottom:0">Templates</div>
+      <button class="btn btn-ghost" id="templates-close">Done</button>
+    </div>
+    <div class="modal-scroll" id="templates-list"></div>
+  </div>
+</div>
+
+<!-- ─── Edit Profile Modal ────────────────────────────────────────── -->
+<div id="edit-profile-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Edit Profile">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px">
+      <div class="modal-title" style="margin-bottom:0">Edit Profile</div>
+      <button class="btn btn-ghost" id="edit-profile-close" style="padding:4px 8px">Cancel</button>
+    </div>
+    
+    <div class="template-input-row" style="margin-bottom:16px">
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;display:block">NAME</label>
+        <input id="edit-profile-name" class="input" type="text" placeholder="Athlete" />
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px">
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;display:block">AGE</label>
+          <input id="edit-profile-age" class="input" type="number" min="1" max="120" placeholder="25" />
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;display:block">HEIGHT (CM)</label>
+          <input id="edit-profile-height" class="input" type="number" min="50" max="250" placeholder="175" />
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;display:block">WEIGHT (KG)</label>
+          <button id="edit-profile-weight-btn" class="edit-profile-trigger" data-val="" style="height:42px; padding:10px 14px; font-size:13px; font-weight:600">Select weight</button>
+        </div>
+      </div>
+      <div>
+        <label style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px;display:block">FITNESS GOAL</label>
+        <select id="edit-profile-goal" class="input select">
+          <option value="Build Muscle">Build Muscle</option>
+          <option value="Lose Weight">Lose Weight</option>
+          <option value="Maintain">Maintain</option>
+          <option value="Increase Strength">Increase Strength</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-accent" id="edit-profile-save" style="width:100%">Save Profile</button>
+  </div>
+</div>
+
+<!-- ─── Manage Exercises Modal (Active Workout) ────────────────────── -->
+<div id="manage-ex-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Manage exercises">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="modal-title" style="margin-bottom:0">Edit Exercises</div>
+      <button class="btn btn-ghost" id="manage-ex-close">Done</button>
+    </div>
+    <div class="modal-scroll" id="manage-ex-list" style="display:flex; flex-direction:column; gap:10px; margin-bottom:16px">
+      <!-- Dynamically populated list of exercises with reorder/delete controls -->
+    </div>
+    <button class="btn btn-secondary" id="manage-ex-add-btn" style="width:100%">
+      <i class="ti ti-plus" style="font-size:16px"></i> Add Exercise
+    </button>
+  </div>
+</div>
+
+<!-- ─── Finish Exercise Prompt Modal ──────────────────────────────── -->
+<div id="finish-prompt-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Finish exercise prompt">
+  <div class="modal-sheet" style="text-align:center; padding:32px 24px">
+    <div style="font-size:42px; margin-bottom:14px">🎉</div>
+    <div class="modal-title" style="margin-bottom:8px">Exercise Completed!</div>
+    <div style="font-size:14px; color:var(--text-muted); margin-bottom:24px; line-height:1.6">What would you like to do next? You can move to the next exercise or finish your session and save.</div>
+    <div style="display:flex; flex-direction:column; gap:10px">
+      <button class="btn btn-accent" id="prompt-next-ex-btn">Next Exercise</button>
+      <button class="btn btn-secondary" id="prompt-end-workout-btn">End Workout &amp; Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Workout Detail Modal ───────────────────────────────────── -->
+<div id="workout-detail-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-label="Workout detail">
+  <div class="modal-sheet" style="max-height:90dvh">
+    <div class="modal-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div>
+        <div class="modal-title" id="detail-modal-title" style="margin-bottom:0"></div>
+        <div id="detail-modal-date-container" style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);margin-top:2px">
+          <span>Date:</span>
+          <input type="date" id="detail-modal-date-picker" style="background:transparent;border:none;color:var(--accent);font-size:12px;font-weight:700;padding:2px 4px;border-radius:4px;cursor:pointer" />
+        </div>
+      </div>
+      <button class="btn btn-ghost" id="detail-modal-close">Close</button>
+    </div>
+    <!-- Stat pills -->
+    <div id="detail-modal-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;margin-top:10px"></div>
+    <!-- Exercise list -->
+    <div class="modal-scroll" id="detail-modal-body"></div>
+  </div>
+</div>
+
+<!-- ─── Custom Scroll Wheel Picker Bottom Sheet ────────────────────── -->
+<div id="scroll-picker-overlay" class="picker-backdrop" role="dialog" aria-modal="true" aria-label="Select value">
+  <div id="scroll-picker-sheet" class="picker-sheet">
+    <div class="picker-header">
+      <span id="picker-title" class="picker-title">Select Value</span>
+      <button id="picker-confirm-btn" class="btn btn-accent btn-sm" style="width:auto;padding:6px 16px">Confirm</button>
+    </div>
+    <div class="picker-body">
+      <div class="drum-container">
+        <div class="drum-selection-highlight"></div>
+        <div class="drum-list" id="picker-drum-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Toast ─────────────────────────────────────────────────────── -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ─── Scripts ───────────────────────────────────────────────────── -->
+<script src="db.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
