@@ -1,8 +1,8 @@
-/**
- * app.js — GymTracker PWA main application
+﻿/**
+ * app.js â€” GymTracker PWA main application
  */
 
-// ─── State ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ State â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const state = {
   view: 'home',
   workout: null,       // active workout session
@@ -28,7 +28,7 @@ const CAT_COLORS = {
   Custom: '#aaaaaa',
 };
 
-// ─── Utility ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Utility â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
@@ -62,7 +62,7 @@ function weekStart(date) {
   return dateKey(d);
 }
 
-// ─── Custom Scroll Wheel Picker ───────────────────────────────────────────────
+// â”€â”€â”€ Custom Scroll Wheel Picker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let currentPickerCallback = null;
 let pickerValues = [];
 
@@ -162,7 +162,7 @@ function el(tag, cls, html = '') {
   return e;
 }
 
-// ─── Router ───────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Router â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function navigate(view, opts = {}) {
   if (state.animating) return;
   state.animating = true;
@@ -189,7 +189,7 @@ window.addEventListener('hashchange', () => {
   navigate(hash);
 });
 
-// ─── Nav setup ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Nav setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function initNav() {
   $$('.nav-item').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -199,7 +199,7 @@ function initNav() {
   });
 }
 
-// ─── Active Workout Chip ──────────────────────────────────────────────────────
+// â”€â”€â”€ Active Workout Chip â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function updateActiveChip() {
   const chip = $('#active-chip');
   if (state.workout && state.view !== 'workout') {
@@ -210,7 +210,7 @@ function updateActiveChip() {
   }
 }
 
-// ─── Workout Timer ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Workout Timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function startWorkoutTimer() {
   if (state.workoutTimer) return;
   state.workoutTimer = setInterval(() => {
@@ -226,7 +226,7 @@ function stopWorkoutTimer() {
   state.workoutTimer = null;
 }
 
-// ─── Rest Timer ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Rest Timer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function startRestTimer(duration = state.restDuration) {
   state.restRemaining = duration;
   state.restTimerDuration = duration; // track for ring fraction
@@ -241,7 +241,7 @@ function startRestTimer(duration = state.restDuration) {
       clearInterval(state.restTimer);
       state.restTimer = null;
       overlay.classList.remove('active');
-      showToast('Rest complete — go!');
+      showToast('Rest complete â€” go!');
       return;
     }
     updateRestRing();
@@ -266,7 +266,7 @@ function skipRest() {
   $('#rest-overlay').classList.remove('active');
 }
 
-// ─── Dashboard View ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Dashboard View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderDashboard() {
   const view = $('#view-home');
 
@@ -276,7 +276,7 @@ async function renderDashboard() {
   const now = new Date();
   if (dateEl) dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
   const username = localStorage.getItem('username') || 'Athlete';
-  if (greetEl) greetEl.innerHTML = `Welcome back, <span>${username}</span>! 👋`;
+  if (greetEl) greetEl.innerHTML = `Welcome back, <span>${username}</span>! ðŸ‘‹`;
 
   const [workouts, weightLogs, templates, allSets, exercises] = await Promise.all([
     db.workouts.getAll(),
@@ -289,14 +289,14 @@ async function renderDashboard() {
   // Current streak
   const streak = calculateStreak(workouts);
   const streakEl = $('#home-streak');
-  if (streakEl) streakEl.textContent = `${streak}🔥`;
+  if (streakEl) streakEl.textContent = `${streak}ðŸ”¥`;
 
   // Current body weight
   const sortedWeights = [...weightLogs].sort((a, b) => new Date(b.date) - new Date(a.date));
   const latestWeight = sortedWeights[0];
   const weightEl = $('#home-weight');
   if (weightEl) {
-    weightEl.textContent = latestWeight ? `${latestWeight.weight} ${state.unit}` : '—';
+    weightEl.textContent = latestWeight ? `${latestWeight.weight} ${state.unit}` : 'â€”';
   }
 
   // Last workout summary
@@ -325,10 +325,10 @@ async function renderDashboard() {
     if (lastMusclesEl) lastMusclesEl.textContent = `Focus: ${uniqueMuscles}`;
     if (lastVolEl) lastVolEl.textContent = `${Math.round(lwVol)} ${state.unit}`;
   } else {
-    if (lastDateEl) lastDateEl.textContent = '—';
+    if (lastDateEl) lastDateEl.textContent = 'â€”';
     if (lastNameEl) lastNameEl.textContent = 'No workouts logged yet';
     if (lastMusclesEl) lastMusclesEl.textContent = 'Start training to see your summary!';
-    if (lastVolEl) lastVolEl.textContent = '—';
+    if (lastVolEl) lastVolEl.textContent = 'â€”';
   }
 
   // Weekly Stats
@@ -369,7 +369,7 @@ function renderQuickStartTemplates(templates) {
   templates.slice(0, 3).forEach(t => {
     const card = el('div', 'quick-card fade-in');
     card.innerHTML = `
-      <div class="qc-icon">📋</div>
+      <div class="qc-icon">ðŸ“‹</div>
       <div>
         <div class="qc-label">${t.name}</div>
         <div class="qc-sub">${(t.exercises || []).length} exercise${(t.exercises || []).length !== 1 ? 's' : ''}</div>
@@ -446,7 +446,7 @@ async function renderRecentWorkouts(workouts, allSets) {
   const sorted = [...workouts].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
   container.innerHTML = '';
   if (sorted.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏋️</div><div class="empty-state-title">No workouts yet</div><div class="empty-state-sub">Hit "New Workout" to start training</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">ðŸ‹ï¸</div><div class="empty-state-title">No workouts yet</div><div class="empty-state-sub">Hit "New Workout" to start training</div></div>`;
     return;
   }
   for (const w of sorted) {
@@ -454,10 +454,10 @@ async function renderRecentWorkouts(workouts, allSets) {
     const vol = sets.reduce((a, s) => a + ((parseFloat(s.weight)||0) * (parseInt(s.reps)||0)), 0);
     const item = el('div', 'workout-item fade-in');
     item.innerHTML = `
-      <div class="workout-item-icon">🏋️</div>
+      <div class="workout-item-icon">ðŸ‹ï¸</div>
       <div class="workout-item-body">
         <div class="workout-item-name">${w.name || 'Workout'}</div>
-        <div class="workout-item-meta">${formatDate(w.date)} · ${formatTime(w.duration || 0)} · ${sets.length} sets</div>
+        <div class="workout-item-meta">${formatDate(w.date)} Â· ${formatTime(w.duration || 0)} Â· ${sets.length} sets</div>
       </div>
       <div class="workout-item-badge">${vol > 0 ? Math.round(vol) + state.unit : ''}</div>`;
     item.addEventListener('click', () => { location.hash = 'history'; });
@@ -516,7 +516,7 @@ function renderWeightSparkline(weightLogs) {
   ctx.stroke();
 }
 
-// ─── Workout View ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Workout View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderWorkoutView() {
   const container = $('#workout-exercises');
   if (!container) return;
@@ -601,7 +601,7 @@ function buildSetRow(exIdx, setIdx, set) {
   const tr = el('tr', set.done ? 'set-done' : '');
   tr.id = `set-${exIdx}-${setIdx}`;
   
-  const prBadge = set.isPR ? `<span style="font-size:10px; background:var(--accent); color:#0a0a0a; border-radius:4px; padding:2px 5px; font-weight:800; margin-left:6px; display:inline-block; vertical-align:middle; filter:drop-shadow(0 0 4px var(--accent-glow))">PR</span>` : '';
+  const prBadge = set.isPR ? `<span style="font-size:12px; background:var(--accent); color:#0a0a0a; border-radius:4px; padding:2px 5px; font-weight:800; margin-left:6px; display:inline-block; vertical-align:middle; filter:drop-shadow(0 0 4px var(--accent-glow))">PR</span>` : '';
   
   tr.innerHTML = `
     <td>
@@ -610,12 +610,12 @@ function buildSetRow(exIdx, setIdx, set) {
     </td>
     <td>
       <button class="set-input-trigger" id="w-${exIdx}-${setIdx}" ${set.done ? 'disabled' : ''}>
-        ${set.weight !== undefined && set.weight !== 0 ? `${set.weight} ${state.unit}` : '—'}
+        ${set.weight !== undefined && set.weight !== 0 ? `${set.weight} ${state.unit}` : 'â€”'}
       </button>
     </td>
     <td>
       <button class="set-input-trigger" id="r-${exIdx}-${setIdx}" ${set.done ? 'disabled' : ''}>
-        ${set.reps !== undefined && set.reps !== 0 ? `${set.reps} reps` : '—'}
+        ${set.reps !== undefined && set.reps !== 0 ? `${set.reps} reps` : 'â€”'}
       </button>
     </td>
     <td>
@@ -729,7 +729,7 @@ async function toggleSet(exIdx, setIdx) {
     const isPR = await isPersonalRecord(ex.id, weight, reps);
     if (isPR) {
       set.isPR = true;
-      showToast('🏆 New Personal Record!');
+      showToast('ðŸ† New Personal Record!');
       triggerPRAnimation();
     }
 
@@ -791,7 +791,7 @@ async function loadPreviousExerciseData(exerciseId) {
   const lastWorkoutSets = historicalSets.filter(s => s.workoutId === lastWorkout.id);
   container.innerHTML = `<div style="font-weight:600; color:var(--text); margin-bottom:4px">Last session (${formatDate(lastWorkout.date)}):</div>`;
   lastWorkoutSets.forEach((s, idx) => {
-    const row = el('div', '', `Set ${idx + 1}: <strong>${s.weight}${state.unit}</strong> × <strong>${s.reps}</strong> reps`);
+    const row = el('div', '', `Set ${idx + 1}: <strong>${s.weight}${state.unit}</strong> Ã— <strong>${s.reps}</strong> reps`);
     row.style.fontSize = '12px';
     row.style.color = 'var(--text-dim)';
     container.appendChild(row);
@@ -829,7 +829,7 @@ async function initiateWorkoutSession(workoutName, exercisesList, templateId = n
 
   startWorkoutTimer();
   renderWorkoutView();
-  showToast('Workout started! Let\'s go! 🏋️');
+  showToast('Workout started! Let\'s go! ðŸ‹ï¸');
 }
 
 async function startWorkoutFromTemplate(template) {
@@ -882,7 +882,7 @@ function handlePromptNextExercise() {
   }
 }
 
-// ─── Workout Summary ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Workout Summary â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function finishWorkout() {
   if (!state.workout) return;
 
@@ -937,7 +937,7 @@ function showWorkoutSummary() {
   const prText = $('#summary-prs-text');
   if (prRow && prText) {
     if (prCount > 0) {
-      prText.textContent = `🏆 ${prCount} new Personal Record${prCount > 1 ? 's' : ''} this session!`;
+      prText.textContent = `ðŸ† ${prCount} new Personal Record${prCount > 1 ? 's' : ''} this session!`;
       prRow.style.display = 'block';
     } else {
       prRow.style.display = 'none';
@@ -964,16 +964,16 @@ function showWorkoutSummary() {
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
             <div style="width:8px;height:8px;border-radius:50%;background:${catColor};flex-shrink:0"></div>
             <span class="summary-ex-name">${ex.name}</span>
-            ${hasPR ? `<span style="font-size:10px;background:var(--accent);color:#0a0a0a;border-radius:4px;padding:1px 5px;font-weight:800;margin-left:auto">PR</span>` : ''}
+            ${hasPR ? `<span style="font-size:12px;background:var(--accent);color:#0a0a0a;border-radius:4px;padding:1px 5px;font-weight:800;margin-left:auto">PR</span>` : ''}
           </div>
           <div class="summary-ex-meta">
             <span><strong>${done.length}</strong> set${done.length !== 1 ? 's' : ''}</span>
             <span><strong>${exReps}</strong> reps</span>
-            <span><strong>${maxW > 0 ? maxW + state.unit : '—'}</strong> max</span>
+            <span><strong>${maxW > 0 ? maxW + state.unit : 'â€”'}</strong> max</span>
             <span style="color:var(--accent)"><strong>${Math.round(exVol)} ${state.unit}</strong></span>
           </div>
           <div class="summary-sets-mini">
-            ${done.map((s, i) => `<span class="summary-set-pill${s.isPR ? ' pr' : ''}">S${i+1} ${s.weight}×${s.reps}</span>`).join('')}
+            ${done.map((s, i) => `<span class="summary-set-pill${s.isPR ? ' pr' : ''}">S${i+1} ${s.weight}Ã—${s.reps}</span>`).join('')}
           </div>
         `;
         listEl.appendChild(row);
@@ -1022,7 +1022,7 @@ async function confirmSaveWorkout() {
   // Sync PRs table in background
   syncAllPRs().catch(console.warn);
 
-  showToast(`${wasName} saved! Great work 💪`);
+  showToast(`${wasName} saved! Great work ðŸ’ª`);
   location.hash = 'history';
 }
 
@@ -1033,7 +1033,7 @@ function continueSummaryWorkout() {
   startWorkoutTimer();
 }
 
-// ─── Manage Exercises (Active Workout) ────────────────────────────────────────
+// â”€â”€â”€ Manage Exercises (Active Workout) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function openManageExercisesModal() {
   const modal = $('#manage-ex-modal');
   if (modal) {
@@ -1117,7 +1117,7 @@ async function removeExerciseFromSession(idx) {
   renderWorkoutExercises();
 }
 
-// ─── Exercise Picker Modal ────────────────────────────────────────────────────
+// â”€â”€â”€ Exercise Picker Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function openExercisePicker() {
   const modal = $('#ex-picker-modal');
   const searchEl = $('#ex-picker-search');
@@ -1140,7 +1140,7 @@ async function openExercisePicker() {
         <div class="lib-ex-cat-dot" style="background:${CAT_COLORS[ex.category]||'#aaa'}"></div>
         <div>
           <div class="ex-pick-name">${ex.name}</div>
-          <div class="ex-pick-cat">${ex.category} · ${ex.muscles}</div>
+          <div class="ex-pick-cat">${ex.category} Â· ${ex.muscles}</div>
         </div>`;
       item.addEventListener('click', () => {
         addExerciseToWorkout(ex);
@@ -1172,7 +1172,7 @@ function addExerciseToWorkout(ex) {
   showToast(`${ex.name} added`);
 }
 
-// ─── Workout Name Edit ────────────────────────────────────────────────────────
+// â”€â”€â”€ Workout Name Edit â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function initWorkoutNameEdit() {
   const nameEl = $('#workout-name');
   if (!nameEl) return;
@@ -1223,7 +1223,7 @@ function initWorkoutNameEdit_el(el) {
   });
 }
 
-// ─── History View ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ History View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderHistory() {
   const container = $('#history-list');
   if (!container) return;
@@ -1246,7 +1246,7 @@ async function renderHistory() {
   if (sorted.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
-        <div class="empty-state-icon" style="font-size:48px">📅</div>
+        <div class="empty-state-icon" style="font-size:48px">ðŸ“…</div>
         <div class="empty-state-title">No workouts yet</div>
         <div class="empty-state-sub">Complete your first workout to build your history</div>
       </div>`;
@@ -1269,7 +1269,7 @@ async function renderHistory() {
     const wEnd = new Date(weekKey);
     wEnd.setDate(wEnd.getDate() + 6);
     const weekLabel = el('div', 'history-week-label');
-    weekLabel.textContent = `${wStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${wEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    weekLabel.textContent = `${wStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} â€“ ${wEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
     groupEl.appendChild(weekLabel);
 
     wks.forEach(w => {
@@ -1322,7 +1322,7 @@ async function renderHistory() {
         </div>
       `;
 
-      // Tap → open detail modal
+      // Tap â†’ open detail modal
       entry.addEventListener('click', () => openWorkoutDetail(w.id, allSets, exercises));
 
       groupEl.appendChild(entry);
@@ -1343,7 +1343,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
   const workout = await db.workouts.getById(workoutId);
   if (!workout) return;
 
-  // ── Helper: reload sets from DB and re-render body ──
+  // â”€â”€ Helper: reload sets from DB and re-render body â”€â”€
   async function reloadAndRender() {
     const liveSets     = await db.sets.getByWorkout(workoutId);
     const allExercises = cachedExercises ? cachedExercises : await db.exercises.getAll();
@@ -1351,7 +1351,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
     renderDetailStats(liveSets);
   }
 
-  // ── Helper: render stat pills ──
+  // â”€â”€ Helper: render stat pills â”€â”€
   function renderDetailStats(sets) {
     if (!statsEl) return;
     const vol       = sets.reduce((a, s) => a + ((parseFloat(s.weight) || 0) * (parseInt(s.reps) || 0)), 0);
@@ -1366,7 +1366,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
     `;
   }
 
-  // ── Helper: render body (exercise blocks + set rows with edit/delete) ──
+  // â”€â”€ Helper: render body (exercise blocks + set rows with edit/delete) â”€â”€
   function renderDetailBody(sets, exercises) {
     if (!bodyEl) return;
     bodyEl.innerHTML = '';
@@ -1394,7 +1394,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
         exHeader.innerHTML = `
           <div class="lib-ex-cat-dot" style="background:${catColor}"></div>
           <span class="detail-ex-name">${exName}</span>
-          <span style="font-size:11px;color:var(--text-muted);margin-left:auto">${exCat}</span>
+          <span style="font-size:12px;color:var(--text-muted);margin-left:auto">${exCat}</span>
         `;
         block.appendChild(exHeader);
 
@@ -1448,7 +1448,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
                     await db.sets.update(s);
                     await reloadAndRender();
                     renderHistory();
-                    showToast('Set updated ✅');
+                    showToast('Set updated âœ…');
                   }
                 });
               }
@@ -1489,7 +1489,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
     }
   }
 
-  // ── Editable date in header ──
+  // â”€â”€ Editable date in header â”€â”€
   if (titleEl) titleEl.textContent = workout.name || 'Workout';
   if (dateEl) {
     // Replace plain text date with an inline date-picker
@@ -1499,7 +1499,7 @@ async function openWorkoutDetail(workoutId, cachedSets, cachedExercises) {
       if (!e.target.value) return;
       workout.date = new Date(e.target.value + 'T12:00:00').toISOString();
       await db.workouts.update(workout);
-      showToast('Date updated ✅');
+      showToast('Date updated âœ…');
       renderHistory();
       renderCalendar && renderCalendar();
     });
@@ -1519,7 +1519,7 @@ function closeWorkoutDetail() {
 }
 
 
-// ─── Library View ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Library View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderLibrary() {
   const exercises = await db.exercises.getAll();
   renderLibraryList(exercises);
@@ -1540,7 +1540,7 @@ function renderLibraryList(exercises) {
 
   container.innerHTML = '';
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-title">No exercises found</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">ðŸ”</div><div class="empty-state-title">No exercises found</div></div>`;
     return;
   }
   filtered.forEach(ex => {
@@ -1620,7 +1620,7 @@ async function openExercisePRModal(ex) {
   if (!modal) return;
   state.currentPRExercise = ex; // store for re-render on range change
   $('#pr-modal-title').textContent = ex.name;
-  $('#pr-modal-subtitle').textContent = `${ex.category} · ${ex.muscles || ''}`;
+  $('#pr-modal-subtitle').textContent = `${ex.category} Â· ${ex.muscles || ''}`;
   
   const [workouts, allSets] = await Promise.all([
     db.workouts.getAll(),
@@ -1632,7 +1632,7 @@ async function openExercisePRModal(ex) {
   
   let maxWeight = 0;
   let bestSetVol = 0;
-  let bestSetText = '—';
+  let bestSetText = 'â€”';
   let totalVolumeAllTime = 0;
   
   exSets.forEach(s => {
@@ -1644,13 +1644,13 @@ async function openExercisePRModal(ex) {
     if (weight > maxWeight) maxWeight = weight;
     if (vol > bestSetVol) {
       bestSetVol = vol;
-      bestSetText = `${weight} × ${reps}`;
+      bestSetText = `${weight} Ã— ${reps}`;
     }
   });
   
-  $('#pr-best-weight').textContent = maxWeight > 0 ? `${maxWeight}${state.unit}` : '—';
+  $('#pr-best-weight').textContent = maxWeight > 0 ? `${maxWeight}${state.unit}` : 'â€”';
   $('#pr-best-set').textContent = bestSetText;
-  $('#pr-best-vol').textContent = totalVolumeAllTime > 0 ? `${Math.round(bestSetVol)}${state.unit}` : '—';
+  $('#pr-best-vol').textContent = totalVolumeAllTime > 0 ? `${Math.round(bestSetVol)}${state.unit}` : 'â€”';
   
   // Group sets by workout session date
   const sessions = {};
@@ -1716,7 +1716,7 @@ async function openExercisePRModal(ex) {
     
     if (dataList.length === 1) {
       const msg = el('div', 'chart-msg-overlay', 'Log more sessions to see your progression');
-      msg.style.cssText = 'position:absolute; bottom:8px; left:0; right:0; text-align:center; color:var(--text-muted); font-size:10px; font-weight:500; font-family:Inter, sans-serif; pointer-events:none;';
+      msg.style.cssText = 'position:absolute; bottom:8px; left:0; right:0; text-align:center; color:var(--text-muted); font-size:12px; font-weight:500; font-family:Inter, sans-serif; pointer-events:none;';
       canvas.parentElement.appendChild(msg);
     }
     
@@ -1813,7 +1813,7 @@ async function saveNewExercise() {
   renderLibrary();
 }
 
-// ─── Weight View ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Weight View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderWeightView() {
   const dateInput = $('#wt-date');
   if (dateInput && !dateInput.value) {
@@ -1844,13 +1844,13 @@ async function renderWeightView() {
       $('#wt-trend').textContent = `${trend >= 0 ? '+' : ''}${trend.toFixed(1)}${state.unit}`;
       $('#wt-trend').style.color = trend <= 0 ? 'var(--success)' : 'var(--danger)';
     } else {
-      $('#wt-trend').textContent = '—';
+      $('#wt-trend').textContent = 'â€”';
     }
   } else {
-    $('#wt-current').textContent = '—';
-    $('#wt-min').textContent = '—';
-    $('#wt-max').textContent = '—';
-    $('#wt-trend').textContent = '—';
+    $('#wt-current').textContent = 'â€”';
+    $('#wt-min').textContent = 'â€”';
+    $('#wt-max').textContent = 'â€”';
+    $('#wt-trend').textContent = 'â€”';
   }
 
   // Render Weight Chart
@@ -1867,7 +1867,7 @@ async function renderWeightView() {
       item.innerHTML = `
         <span class="weight-log-date">${formatDate(entry.date)}</span>
         <span class="weight-log-val">${entry.weight} ${state.unit}</span>
-        <button class="weight-log-del" data-id="${entry.id}">✕</button>`;
+        <button class="weight-log-del" data-id="${entry.id}">âœ•</button>`;
       item.querySelector('.weight-log-del').addEventListener('click', async () => {
         await db.weightLogs.delete(entry.id);
         showToast('Entry removed');
@@ -1876,7 +1876,7 @@ async function renderWeightView() {
       list.appendChild(item);
     });
     if (sorted.length === 0) {
-      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⚖️</div><div class="empty-state-title">No entries yet</div><div class="empty-state-sub">Log your weight above to start tracking</div></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">âš–ï¸</div><div class="empty-state-title">No entries yet</div><div class="empty-state-sub">Log your weight above to start tracking</div></div>`;
     }
   }
 
@@ -2017,7 +2017,7 @@ function setUnit(u) {
   if (state.view === 'home') renderDashboard();
 }
 
-// ─── BMI Calculator ──────────────────────────────────────────────────────────
+// â”€â”€â”€ BMI Calculator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function calculateBMI() {
   const heightInput = $('#bmi-height');
   const weightBtn = $('#bmi-weight-btn');
@@ -2073,7 +2073,7 @@ function calculateBMI() {
   resultPanel.style.display = 'flex';
 }
 
-// ─── Templates ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function openTemplatesModal() {
   const modal = $('#templates-modal');
   modal.classList.add('active');
@@ -2093,12 +2093,12 @@ async function renderTemplatesList() {
     templates.forEach(t => {
       const item = el('div', 'template-item');
       item.innerHTML = `
-        <div class="template-icon">📋</div>
+        <div class="template-icon">ðŸ“‹</div>
         <div class="template-body">
           <div class="template-name">${t.name}</div>
           <div class="template-meta">${(t.exercises||[]).length} exercise${(t.exercises||[]).length!==1?'s':''}</div>
         </div>
-        <button class="template-del" data-id="${t.id}">✕</button>`;
+        <button class="template-del" data-id="${t.id}">âœ•</button>`;
       item.querySelector('.template-del').addEventListener('click', async (e) => {
         e.stopPropagation();
         await db.templates.delete(t.id);
@@ -2128,7 +2128,7 @@ async function saveWorkoutAsTemplate() {
   renderDashboard();
 }
 
-// ─── PR Table Syncing ────────────────────────────────────────────────────────
+// â”€â”€â”€ PR Table Syncing â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function syncAllPRs() {
   const [workouts, allSets] = await Promise.all([
     db.workouts.getAll(),
@@ -2187,7 +2187,7 @@ async function syncAllPRs() {
   }
 }
 
-// ─── Progress View ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Progress View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function renderProgress() {
   // Show active tab
   $$('#progress-tabs .seg-tab').forEach(btn => {
@@ -2217,7 +2217,7 @@ async function renderPRList() {
   ]);
 
   if (prs.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🏆</div><div class="empty-state-title">No PRs recorded yet</div><div class="empty-state-sub">Log sets in workouts to see your Personal Records here</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-icon">ðŸ†</div><div class="empty-state-title">No PRs recorded yet</div><div class="empty-state-sub">Log sets in workouts to see your Personal Records here</div></div>`;
     return;
   }
 
@@ -2233,12 +2233,12 @@ async function renderPRList() {
       <div class="pr-card-rank">#${idx + 1}</div>
       <div class="pr-card-body">
         <div class="pr-card-name">${ex.name}</div>
-        <div class="pr-card-meta">${ex.category} · Max Weight: ${pr.maxWeight}${state.unit}</div>
-        <div style="font-size:10px; color:var(--text-muted); margin-top:2px">Achieved: ${formatDate(pr.maxVolumeDate)}</div>
+        <div class="pr-card-meta">${ex.category} Â· Max Weight: ${pr.maxWeight}${state.unit}</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:2px">Achieved: ${formatDate(pr.maxVolumeDate)}</div>
       </div>
       <div class="pr-card-val">
         <div>Best Vol: ${Math.round(pr.maxVolume)} ${state.unit}</div>
-        <div style="font-size: 11px; color: var(--accent); font-weight: 700">Most Reps: ${pr.maxReps}</div>
+        <div style="font-size:12px; color: var(--accent); font-weight: 700">Most Reps: ${pr.maxReps}</div>
       </div>
     `;
     card.addEventListener('click', () => openExercisePRModal(ex));
@@ -2246,7 +2246,7 @@ async function renderPRList() {
   });
 }
 
-// ─── Profile View ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Profile View â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderProfile() {
   const nameDisplay = $('#profile-name-display');
   const goalDisplay = $('#profile-goal-display');
@@ -2258,9 +2258,9 @@ async function renderProfile() {
 
   if (nameDisplay) nameDisplay.textContent = profile.name || localStorage.getItem('username') || 'Athlete';
   if (goalDisplay) goalDisplay.textContent = `Goal: ${profile.goal || localStorage.getItem('fitnessGoal') || 'Build Muscle'}`;
-  if (ageDisplay) ageDisplay.textContent = profile.age ? `${profile.age} yrs` : (localStorage.getItem('age') ? `${localStorage.getItem('age')} yrs` : '—');
-  if (heightDisplay) heightDisplay.textContent = profile.height ? `${profile.height} cm` : (localStorage.getItem('height') ? `${localStorage.getItem('height')} cm` : '—');
-  if (weightDisplay) weightDisplay.textContent = profile.weight ? `${profile.weight} kg` : (localStorage.getItem('weight') ? `${localStorage.getItem('weight')} kg` : '—');
+  if (ageDisplay) ageDisplay.textContent = profile.age ? `${profile.age} yrs` : (localStorage.getItem('age') ? `${localStorage.getItem('age')} yrs` : 'â€”');
+  if (heightDisplay) heightDisplay.textContent = profile.height ? `${profile.height} cm` : (localStorage.getItem('height') ? `${localStorage.getItem('height')} cm` : 'â€”');
+  if (weightDisplay) weightDisplay.textContent = profile.weight ? `${profile.weight} kg` : (localStorage.getItem('weight') ? `${localStorage.getItem('weight')} kg` : 'â€”');
 
   const [workouts, allSets] = await Promise.all([
     db.workouts.getAll(),
@@ -2284,7 +2284,7 @@ async function renderProfile() {
   }
 
   const streaks = calculateStreaks(completed);
-  $('#prof-streak').textContent = `${streaks.current} / ${streaks.longest}🔥`;
+  $('#prof-streak').textContent = `${streaks.current} / ${streaks.longest}ðŸ”¥`;
 
   $('#rest-dur-display').textContent = `${state.restDuration}s`;
 
@@ -2460,7 +2460,7 @@ async function exportData() {
     const profile = JSON.parse(localStorage.getItem('profile') || '{}');
     const todayStr = new Date().toISOString().split('T')[0];
 
-    // ── Build nested workouts structure ──────────────────────────────────────
+    // â”€â”€ Build nested workouts structure â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const completedWorkouts = workouts
       .filter(w => w.status !== 'active')
       .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -2499,7 +2499,7 @@ async function exportData() {
       };
     });
 
-    // ── Personal Records ─────────────────────────────────────────────────────
+    // â”€â”€ Personal Records â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const structuredPRs = prs.map(pr => {
       const ex = exercises.find(e => e.id === pr.exerciseId);
       return {
@@ -2511,7 +2511,7 @@ async function exportData() {
       };
     });
 
-    // ── Weight Log ───────────────────────────────────────────────────────────
+    // â”€â”€ Weight Log â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const structuredWeightLog = weightLogs
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map(l => ({
@@ -2520,7 +2520,7 @@ async function exportData() {
         unit:   l.unit || state.unit
       }));
 
-    // ── Templates ────────────────────────────────────────────────────────────
+    // â”€â”€ Templates â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const structuredTemplates = templates.map(t => ({
       name:      t.name,
       muscles:   t.muscles || [],
@@ -2530,7 +2530,7 @@ async function exportData() {
       })
     }));
 
-    // ── Final export object ──────────────────────────────────────────────────
+    // â”€â”€ Final export object â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     const exportPayload = {
       exportDate: todayStr,
       appVersion: 'GymTracker v1.0',
@@ -2558,16 +2558,16 @@ async function exportData() {
     const blob     = new Blob([jsonStr], { type: 'application/json' });
     const filename = `gymtracker-export-${todayStr}.json`;
 
-    // ── Download strategy: try anchor download, fall back to new tab on iOS ──
+    // â”€â”€ Download strategy: try anchor download, fall back to new tab on iOS â”€â”€
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
     if (isIOS || isSafari) {
-      // iOS Safari: open in new tab — user taps Share → Save to Files
+      // iOS Safari: open in new tab â€” user taps Share â†’ Save to Files
       const url = URL.createObjectURL(blob);
       const newTab = window.open(url, '_blank');
       if (newTab) {
-        showToast('📱 Tap Share → Save to Files to export');
+        showToast('ðŸ“± Tap Share â†’ Save to Files to export');
         setTimeout(() => URL.revokeObjectURL(url), 60000);
       } else {
         showToast('Allow pop-ups to export data');
@@ -2582,12 +2582,12 @@ async function exportData() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast(`✅ Exported ${structuredWorkouts.length} workouts!`);
+      showToast(`âœ… Exported ${structuredWorkouts.length} workouts!`);
     }
 
   } catch (err) {
     console.error('Export failed:', err);
-    showToast('Export failed — please try again');
+    showToast('Export failed â€” please try again');
   } finally {
     // Restore button
     if (btn) {
@@ -2598,7 +2598,7 @@ async function exportData() {
   }
 }
 
-// ─── Workout Setup Wizard Flow ────────────────────────────────────────────────
+// â”€â”€â”€ Workout Setup Wizard Flow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const MUSCLE_EXERCISES_MAP = {
   Chest: ['Bench Press', 'Incline Bench Press', 'Push-Ups', 'Dumbbell Chest Press', 'Incline Smith Press', 'Pec Deck', 'Reverse Pec Deck', 'Incline Dumbbell Fly'],
   Back: ['Pull-Ups', 'Barbell Row', 'Dumbbell Row', 'Lat Pulldown', 'Seated Cable Row', 'T-Bar Row', 'Deadlift', 'Lat Pullover (Dumbbell)', 'Lat Pullover (Cable)', 'Straight Arm Pulldown', 'Meadows Row'],
@@ -2854,7 +2854,7 @@ function goToPrevSetupStep() {
   }
 }
 
-// ─── PR Badge Animation ───────────────────────────────────────────────────────
+// â”€â”€â”€ PR Badge Animation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function triggerPRAnimation() {
   const overlay = document.createElement('div');
   overlay.style.cssText = `
@@ -2868,7 +2868,7 @@ function triggerPRAnimation() {
     transition:all 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
     text-align:center; pointer-events:none;
   `;
-  overlay.innerHTML = '🏆 NEW RECORD! 🏆';
+  overlay.innerHTML = 'ðŸ† NEW RECORD! ðŸ†';
   document.body.appendChild(overlay);
 
   // Animate in
@@ -2888,7 +2888,7 @@ function triggerPRAnimation() {
   }, 1600);
 }
 
-// ─── Home Sub-Tabs ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Home Sub-Tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let homeTab = 'dash'; // 'dash' | 'calendar' | 'stats'
 let statsTimeRange = 'weekly'; // 'weekly' | 'monthly'
 let calYear = new Date().getFullYear();
@@ -2908,7 +2908,7 @@ function switchHomeTab(tab) {
   if (tab === 'stats') renderStatsDashboard();
 }
 
-// ─── Calendar Rendering ───────────────────────────────────────────────────────
+// â”€â”€â”€ Calendar Rendering â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function pad(n) { return String(n).padStart(2, '0'); }
 
 async function renderCalendar() {
@@ -3010,7 +3010,7 @@ function showCalendarDayDetail(dateStr, dayWorkouts, allSets) {
     const card = el('div', 'card');
     card.style.padding = '18px 14px';
     card.innerHTML = `
-      <div style="color:var(--text-muted);font-size:13px;margin-bottom:14px">🌙 Rest day — no workouts logged.</div>
+      <div style="color:var(--text-muted);font-size:13px;margin-bottom:14px">ðŸŒ™ Rest day â€” no workouts logged.</div>
       <div style="font-size:14px;font-weight:700;margin-bottom:10px">Log a past workout for this date?</div>
       <button id="cal-log-past-btn" class="btn btn-accent btn-sm" style="width:100%">+ Log Workout for ${d.toLocaleDateString('en-US',{month:'short',day:'numeric'})}</button>
     `;
@@ -3042,8 +3042,8 @@ function showCalendarDayDetail(dateStr, dayWorkouts, allSets) {
       <div style="display:flex; justify-content:space-between; align-items:center">
         <div>
           <div style="font-size:15px; font-weight:800">${w.name || 'Workout'}</div>
-          <div style="font-size:11px; color:var(--text-muted); margin-top:2px">
-            ⏱ ${formatTime(w.duration||0)} · 💪 ${wSets.length} sets · ⚖️ ${Math.round(vol)} ${state.unit}
+          <div style="font-size:12px; color:var(--text-muted); margin-top:2px">
+            â± ${formatTime(w.duration||0)} Â· ðŸ’ª ${wSets.length} sets Â· âš–ï¸ ${Math.round(vol)} ${state.unit}
           </div>
         </div>
         <button class="btn btn-accent btn-sm" style="width:auto;padding:6px 12px">Details</button>
@@ -3053,7 +3053,7 @@ function showCalendarDayDetail(dateStr, dayWorkouts, allSets) {
   });
 }
 
-// ─── Stats Dashboard ──────────────────────────────────────────────────────────
+// â”€â”€â”€ Stats Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function renderStatsDashboard() {
   const [workouts, allSets, exercises] = await Promise.all([
     db.workouts.getAll(),
@@ -3090,10 +3090,10 @@ async function renderStatsDashboard() {
     if (!ex) return;
     catCount[ex.category] = (catCount[ex.category] || 0) + 1;
   });
-  const mostTrained = Object.entries(catCount).sort((a,b) => b[1]-a[1])[0]?.[0] || '—';
+  const mostTrained = Object.entries(catCount).sort((a,b) => b[1]-a[1])[0]?.[0] || 'â€”';
 
   // Strongest exercise (best all-time estimated 1RM)
-  let strongestEx = '—';
+  let strongestEx = 'â€”';
   let best1RM = 0;
   allSets.filter(s => s.done).forEach(s => {
     const w = parseFloat(s.weight) || 0;
@@ -3102,7 +3102,7 @@ async function renderStatsDashboard() {
     if (orm > best1RM) {
       best1RM = orm;
       const ex = exercises.find(e => e.id === s.exerciseId);
-      strongestEx = ex ? `${ex.name} (${Math.round(w)}${state.unit})` : '—';
+      strongestEx = ex ? `${ex.name} (${Math.round(w)}${state.unit})` : 'â€”';
     }
   });
 
@@ -3121,7 +3121,7 @@ async function renderStatsDashboard() {
   safeSet('#stats-longest-streak', `${streaks.longest} day${streaks.longest !== 1 ? 's' : ''}`);
 }
 
-// ─── iOS Install Banner ───────────────────────────────────────────────────────
+// â”€â”€â”€ iOS Install Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function initIOSInstallBanner() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
@@ -3139,7 +3139,7 @@ function initIOSInstallBanner() {
   }
 }
 
-// ─── Init ────────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Init â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 async function init() {
   // Register service worker and handle updates automatically
   if ('serviceWorker' in navigator) {
@@ -3184,7 +3184,7 @@ async function init() {
   // Nav
   initNav();
 
-  // Active chip click → go to workout
+  // Active chip click â†’ go to workout
   $('#active-chip').addEventListener('click', () => { location.hash = 'workout'; });
 
   // Rest timer
@@ -3305,7 +3305,7 @@ async function init() {
   $('#open-templates-btn')?.addEventListener('click', openTemplatesModal);
   $('#templates-close')?.addEventListener('click', closeTemplatesModal);
 
-  // ── Home sub-tabs (Dashboard / Calendar / Stats) ──────────────────────────
+  // â”€â”€ Home sub-tabs (Dashboard / Calendar / Stats) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   $$('#home-tabs .seg-tab').forEach(btn => {
     btn.addEventListener('click', () => switchHomeTab(btn.dataset.tab));
   });
@@ -3331,10 +3331,10 @@ async function init() {
     });
   });
 
-  // ── BMI Calculator ─────────────────────────────────────────────────────────
+  // â”€â”€ BMI Calculator â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   $('#bmi-calc-btn')?.addEventListener('click', calculateBMI);
 
-  // ── Scroll picker triggers ─────────────────────────────────────────────────
+  // â”€â”€ Scroll picker triggers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   // Weight logger trigger
   $('#wt-input-btn')?.addEventListener('click', () => {
     const curVal = parseFloat($('#wt-input-btn').dataset.val) || 70;
@@ -3380,7 +3380,7 @@ async function init() {
     });
   });
 
-  // ── Weight chart range tabs ────────────────────────────────────────────────
+  // â”€â”€ Weight chart range tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   $$('#weight-chart-range-tabs .seg-tab').forEach(btn => {
     btn.addEventListener('click', async () => {
       $$('#weight-chart-range-tabs .seg-tab').forEach(b => b.classList.toggle('active', b === btn));
@@ -3389,7 +3389,7 @@ async function init() {
     });
   });
 
-  // ── PR chart range tabs ────────────────────────────────────────────────────
+  // â”€â”€ PR chart range tabs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   $$('#pr-range-tabs .seg-tab').forEach(btn => {
     btn.addEventListener('click', () => {
       $$('#pr-range-tabs .seg-tab').forEach(b => b.classList.toggle('active', b === btn));
@@ -3397,7 +3397,7 @@ async function init() {
     });
   });
 
-  // ── Edit Profile Modal ────────────────────────────────────────────────────
+  // â”€â”€ Edit Profile Modal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   $('#edit-profile-btn')?.addEventListener('click', () => {
     const modal = $('#edit-profile-modal');
     if (!modal) return;
@@ -3432,7 +3432,7 @@ async function init() {
     if (wrap) wrap.style.display = e.target.checked ? 'block' : 'none';
   });
 
-  // Edit name button (legacy alias → profile modal)
+  // Edit name button (legacy alias â†’ profile modal)
   $('#edit-name-btn')?.addEventListener('click', () => {
     const modal = $('#edit-profile-modal') || $('#edit-name-modal');
     if (!modal) return;
@@ -3474,7 +3474,7 @@ async function init() {
     if (profile.name) localStorage.setItem('username', profile.name);
     localStorage.setItem('profile', JSON.stringify(profile));
     renderProfile();
-    showToast('Profile saved! ✅');
+    showToast('Profile saved! âœ…');
     $('#edit-profile-modal')?.classList.remove('active');
   });
 
@@ -3505,3 +3505,4 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
